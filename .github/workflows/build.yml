@@ -51,7 +51,11 @@ jobs:
           key: pkg-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Linux-Pkg/**') }}
       - name: Build Pkg Package
         if: steps.cache-pkg.outputs.cache-hit != 'true'
-        run: cd ./scripts/Linux-Pkg && make all && cd ../..
+        run: |
+          cd ./scripts/Linux-Pkg/
+          make clean
+          mkdir -p Output && chmod 777 Output
+          make docker-build-local
 
       - name: Cache Rpm Package
         id: cache-rpm
