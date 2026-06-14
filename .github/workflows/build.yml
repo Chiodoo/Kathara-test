@@ -1,0 +1,63 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os : [ubuntu-24.04]
+        # os : [ ubuntu-24.04, macos-26, macos-26-intel, windows-2025, windows-arm ]
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.13.11
+          cache: pip
+      - run: |
+            python -m pip install pytest
+            python -m pip install -r ./src/requirements.txt
+      # - name: Run PyTest
+      #   run: python -m pytest ./tests
+
+      - name: Get Kathara Version
+        id: get-version
+        run: |
+          echo "version=$(cat ./src/Kathara/version.py | grep CURRENT_VERSION | sed -r -e 's/^.*"(.*)"$/\1/g')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Cache Deb Package
+        id: cache-deb
+        uses: actions/cache@v5
+        with:
+          path: ./scripts/Linux-Deb/Output
+          key: deb-${{ steps.get-version.outputs.version }}
+      - name: Build Deb Package
+        if: steps.cache-deb.outputs.cache-hit != 'true'
+        run: cd ./scripts/Linux-Deb && make docker-unsigned_24.04 && cd ../..
+      
+      - name: Cache Pkg Package
+        id: cache-pkg
+        uses: actions/cache@v5
+        with:
+          path: ./scripts/Linux-Pkg/Output
+          key: pkg-${{ steps.get-version.outputs.version }}
+      - name: Build Pkg Package
+        if: steps.cache-pkg.outputs.cache-hit != 'true'
+        run: cd ./scripts/Linux-Pkg && make all && cd ../..
+
+      - name: Cache Rpm Package
+        id: cache-rpm
+        uses: actions/cache@v5
+        with:
+          path: ./scripts/Linux-Rpm/Output
+          key: rpm-${{ steps.get-version.outputs.version }}
+      - name: Build Rpm Package
+        if: steps.cache-rpm.outputs.cache-hit != 'true'
+        run: cd ./scripts/Linux-Rpm && make all && cd ../..
