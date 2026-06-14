@@ -5,6 +5,9 @@ on:
     branches:
       - 'main'
 
+env:
+  DISTRO: 24.04
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -24,28 +27,28 @@ jobs:
       # - name: Run PyTest
       #   run: python -m pytest ./tests
 
-      # - name: Get Kathara Version
-      #   id: get-version
-      #   run: |
-      #     echo "version=$(cat ./src/Kathara/version.py | grep CURRENT_VERSION | sed -r -e 's/^.*"(.*)"$/\1/g')" >> $GITHUB_OUTPUT
-      #   shell: bash
+      - name: Get Kathara Version
+        id: get-version
+        run: |
+          echo "version=$(cat ./src/Kathara/version.py | grep CURRENT_VERSION | sed -r -e 's/^.*"(.*)"$/\1/g')" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Cache Deb Package
         id: cache-deb
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae    #v5.0.5
         with:
           path: ./scripts/Linux-Deb/Output
-          key: deb-${{ hashFiles('src/**', 'scripts/Linux-Deb/**') }}
+          key: deb-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Linux-Deb/**') }}
       - name: Build Deb Package
         if: steps.cache-deb.outputs.cache-hit != 'true'
-        run: cd ./scripts/Linux-Deb && make docker-unsigned_24.04 && cd ../..
+        run: cd ./scripts/Linux-Deb && make docker-unsigned_$DISTRO && cd ../..
       
       - name: Cache Pkg Package
         id: cache-pkg
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae    #v5.0.5
         with:
           path: ./scripts/Linux-Pkg/Output
-          key: pkg-${{ hashFiles('src/**', 'scripts/Linux-Pkg/**') }}
+          key: pkg-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Linux-Pkg/**') }}
       - name: Build Pkg Package
         if: steps.cache-pkg.outputs.cache-hit != 'true'
         run: cd ./scripts/Linux-Pkg && make all && cd ../..
@@ -55,7 +58,7 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae    #v5.0.5
         with:
           path: ./scripts/Linux-Rpm/Output
-          key: rpm-${{ hashFiles('src/**', 'scripts/Linux-Rpm/**') }}
+          key: rpm-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Linux-Rpm/**') }}
       - name: Build Rpm Package
         if: steps.cache-rpm.outputs.cache-hit != 'true'
         run: cd ./scripts/Linux-Rpm && make all && cd ../..
