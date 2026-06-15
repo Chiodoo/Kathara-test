@@ -47,5 +47,7 @@ if /I "%arch%"=="AMD64" (
     set "arch_suffix=x86"
 )
 
-iscc /DMyArchitecture=%arch_suffix% .\installer.iss
+call jrepl "__ARCH__" "%arch_suffix%" /inc -1 /f installer.iss /o -
+
+iscc .\installer.iss
 cmd.exe
