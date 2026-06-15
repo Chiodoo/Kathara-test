@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-VERSION=0.0.0
+VERSION=__KATHARA_VERSION__
 PACKAGE_VERSION=1
 
 .PHONY: all clean docker-build-image prepare-source prepare-man-pages prepare-bash-completion pack-source build

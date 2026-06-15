@@ -41,7 +41,10 @@ jobs:
           key: deb-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Linux-Deb/**') }}
       - name: Build Deb Package
         if: steps.cache-deb.outputs.cache-hit != 'true'
-        run: cd ./scripts/Linux-Deb && make docker-unsigned_$DISTRO && cd ../..
+        run: | 
+          cd ./scripts/Linux-Deb
+          sed -i -e "s|__KATHARA_VERSION__|${{ steps.get-version.outputs.version }}|g" Makefile
+          make docker-unsigned_$DISTRO
       
       - name: Cache Pkg Package
         id: cache-pkg
@@ -53,6 +56,7 @@ jobs:
         if: steps.cache-pkg.outputs.cache-hit != 'true'
         run: |
           cd ./scripts/Linux-Pkg/
+          sed -i -e "s|__KATHARA_VERSION__|${{ steps.get-version.outputs.version }}|g" Makefile
           make clean
           mkdir -p Output && chmod 777 Output
           make docker-build-local
@@ -65,4 +69,7 @@ jobs:
           key: rpm-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Linux-Rpm/**') }}
       - name: Build Rpm Package
         if: steps.cache-rpm.outputs.cache-hit != 'true'
-        run: cd ./scripts/Linux-Rpm && make all && cd ../..
+        run: | 
+          cd ./scripts/Linux-Rpm
+          sed -i -e "s|__KATHARA_VERSION__|${{ steps.get-version.outputs.version }}|g" Makefile
+          make all
