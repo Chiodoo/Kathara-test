@@ -71,3 +71,16 @@ jobs:
           cd ./scripts/Linux-Rpm
           sed -i -e "s|__KATHARA_VERSION__|${{ steps.get-version.outputs.version }}|g" Makefile
           make all
+
+      - name: Cache Windows Installer
+        id: cache-win
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae    #v5.0.5
+        with:
+          path: ./scripts/Windows/Output
+          key: win-${{ steps.get-version.outputs.version }}-${{ hashFiles('src/**', 'scripts/Windows/**') }}
+      - name: Build Windows Installer
+        if: steps.cache-win.outputs.cache-hit != 'true'
+        run: | 
+          cd ./scripts/Windows/
+          sed -i -e "s|__KATHARA_VERSION__|${{ steps.get-version.outputs.version }}|g" Makefile
+          make all

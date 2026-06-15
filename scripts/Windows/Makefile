@@ -1,15 +1,14 @@
 #!/usr/bin/make -f
 
-# VERSION=__KATHARA_VERSION__
-VERSION=0.0.0
+VERSION=__KATHARA_VERSION__
 PACKAGE_VERSION=1
 
 ifneq ($(shell uname -m | grep -E "x86_64.*"),) 
-    ARCH=x64compatible
+    ARCH=x64
 else ifeq ($(shell uname -m), amd64) 
-    ARCH=x64compatible
+    ARCH=x64
 else ifneq ($(shell uname -m | grep -E "i.*86"),) 
-    ARCH=x86compatible
+    ARCH=x86
 else ifneq ($(shell uname -m | grep -E "arm.*"),)
 	ARCH=arm64
 else ifneq ($(shell uname -m | grep -E "aarch.*"),)
@@ -21,6 +20,7 @@ endif
 all: clean docker-build-installer clean-assets
 
 docker-build-installer: docker-build-executable prepare-executable
+	chmod -R a+w Output && umask a+w
 	docker run -ti --rm -v `pwd`/Output:/work amake/innosetup installer.iss
 
 docker-build-executable: docker-build-image-pyinstaller prepare-source
