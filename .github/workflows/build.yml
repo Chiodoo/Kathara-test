@@ -57,9 +57,7 @@ jobs:
         run: |
           cd ./scripts/Linux-Pkg/
           sed -i -e "s|__KATHARA_VERSION__|${{ steps.get-version.outputs.version }}|g" Makefile
-          make clean
-          mkdir -p Output && chmod 777 Output
-          make docker-build-local
+          make all
 
       - name: Cache Rpm Package
         id: cache-rpm
