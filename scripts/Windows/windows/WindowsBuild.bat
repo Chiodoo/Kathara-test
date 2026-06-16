@@ -21,6 +21,8 @@ cd ..\..\..
 pytest
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+cd src\
+
 pyinstaller --distpath=./kathara.dist --workpath=./kathara.build kathara.spec
 
 python -c "for p in __import__('pathlib').Path('.').rglob('*.py[co]'): p.unlink()"
@@ -34,7 +36,6 @@ rmdir /S /Q kathara.build
 CALL %VENV_DIR%\Scripts\deactivate
 rmdir /S /Q %VENV_DIR%
 
-copy -r kathara.dist ..\scripts\Windows\windows
 copy ..\LICENSE ..\scripts\Windows\windows
 
 cd ..\scripts\Windows\windows
@@ -47,7 +48,5 @@ if /I "%arch%"=="AMD64" (
     set "arch_suffix=x86"
 )
 
-call jrepl "__ARCH__" "%arch_suffix%" /inc -1 /f installer.iss /o -
-
-iscc .\installer.iss
+iscc /DMyArchitecture=%arch_suffix% .\installer.iss
 cmd.exe

@@ -44,7 +44,8 @@ prepare-executable:
 	cp 	  windows/installer.iss Output
 	cp ../../LICENSE Output
 	cd Output && sed -r -i 's|__VERSION__|$(VERSION)|g' installer.iss
-	cd Output && sed -r -i "s|__ARCH__|$(ARCH)|g" installer.iss
+	cd Output && sed -r -i 's|..\..\..\src\(kathara.dist)|\1|g' installer.iss
+	cd Output && sed -r -i 's|^;(.*)"__ARCH__"$|\1"$(ARCH)"|g' installer.iss
 
 clean-assets:
 	rm -rf Output/Assets

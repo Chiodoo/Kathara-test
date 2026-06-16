@@ -6,7 +6,7 @@
 #define MyAppPublisher "Kathara Team"
 #define MyAppURL "https://www.kathara.org"
 #define MyAppExeName "kathara.exe"
-#define MyArchitecture "__ARCH__"
+; #define MyArchitecture "__ARCH__"
 
 #include "Assets\environment.iss"
 
@@ -45,7 +45,7 @@ WelcomeLabel2=Kathara is a lightweight container-based network emulation tool.%n
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "kathara.dist\kathara\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\src\kathara.dist\kathara\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
