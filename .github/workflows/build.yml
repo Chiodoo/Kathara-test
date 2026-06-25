@@ -217,3 +217,35 @@ jobs:
           path: scripts/OSX/Output
           if-no-files-found: warn
           retention-days: 7
+
+#================================================================================================
+
+  pypi:
+    name: pypi
+    needs : [test,prepare]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10   # v6.0.3
+      - name: Cache Pip Package
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae   # v5.0.5
+        id: cache-pip
+        with:
+          path: scripts/pip-package/dist
+          key: pip-${{ needs.prepare.outputs.version }}-${{ hashFiles('src/**', 'scripts/pip-package/**', '!scripts/pip-package/dist/**') }}
+      - uses: ./.github/actions/setup-python-build
+        with:
+          python-version: '3.13'
+      - name: Build Pip Package
+        run: |
+          sed -i '' -e 's|(^version = )".*"$|\1"${{ needs.prepare.outputs.version }}"|g' pyproject.toml
+          sed -i '' -e "s|(^version = ).*$|\1${{ needs.prepare.outputs.version }}|g" setup.cfg
+          sed -i '' -e "s|(^version = )'.*'$|\1'${{ needs.prepare.outputs.version }}'|g" setup.py
+          sed -i '' -e "s|(/tags/).*(.tar.gz)$|\1${{ needs.prepare.outputs.version }}\2|g" setup.py
+          cd scripts/pip-package
+          make package
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a   #v7.0.1
+        with:
+          name: pypi
+          path: scripts/pip-package/dist
+          if-no-files-found: warn
+          retention-days: 7
