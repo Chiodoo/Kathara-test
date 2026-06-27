@@ -132,6 +132,11 @@ jobs:
                 { "title": "## Maintenance", "labels": ["chore", "ci", "docs", "dependencies"] },
                 { "title": "## Other Changes", "labels": [] }
               ]
+              "label_extractors": [
+                { "pattern": "^feat(?:\\([^)]+\\))?:", "target": "feature" },
+                { "pattern": "^(?:fix|bug)(?:\\([^)]+\\))?:", "target": "fix" },
+                { "pattern": "^(?:chore|ci|docs|build|refactor)(?:\\([^)]+\\))?:", "target": "chore" }
+              ]
             }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
