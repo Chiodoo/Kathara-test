@@ -17,7 +17,7 @@ env:
   #   false -> the run is skipped cleanly (green, no release)
   #   true  -> the run fails (red)
   # Swap the literal for ${{ vars.STRICT_RELEASE }} to drive it from a repo variable.
-  STRICT_RELEASE: false
+  STRICT_RELEASE: True
 
 jobs:
 
