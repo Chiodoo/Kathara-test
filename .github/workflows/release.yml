@@ -116,7 +116,7 @@ jobs:
         id: changelog
         uses: mikepenz/release-changelog-builder-action@c9bcd8238b6f41e05561348339429d360b1c0247   # v6.2.3
         with:
-          mode: "HYBRID"
+          mode: "COMMIT"
           fromTag: ${{ needs.version.outputs.prev_tag }}
           toTag: ${{ github.sha }}
           failOnError: false
