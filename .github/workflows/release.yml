@@ -14,9 +14,9 @@ permissions:
 env:
   # Behaviour when main receives a push WITHOUT a version bump in version.py
   # (i.e. CURRENT_VERSION already exists as a release/tag):
-  #   false -> the run is skipped cleanly (green, no release)
-  #   true  -> the run fails (red)
-  STRICT_RELEASE: True
+  #   "False" -> the run is skipped cleanly (green, no release)
+  #   "True"  -> the run fails (red)
+  STRICT_RELEASE: False
 
 jobs:
 
