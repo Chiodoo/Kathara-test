@@ -127,15 +127,17 @@ jobs:
               "pr_template": "- #{{TITLE}} (##{{NUMBER}}) by @#{{AUTHOR}}",
               "commit_template": "- #{{TITLE}} (#{{MERGE_SHA}}) by @#{{AUTHOR}}",
               "categories": [
-                { "title": "## Features", "labels": ["feature", "enhancement"] },
+                { "title": "## Features", "labels": ["feat", "feature", "enhancement"] },
                 { "title": "## Fixes", "labels": ["fix", "bug"] },
-                { "title": "## Maintenance", "labels": ["chore", "ci", "docs", "dependencies"] },
+                { "title": "## Maintenance", "labels": ["chore", "ci", "docs", "dependencies", "build", "refactor", "style", "test"] },
                 { "title": "## Other Changes", "labels": [] }
-              ]
-              "label_extractors": [
-                { "pattern": "^feat(?:\\([^)]+\\))?:", "target": "feature" },
-                { "pattern": "^(?:fix|bug)(?:\\([^)]+\\))?:", "target": "fix" },
-                { "pattern": "^(?:chore|ci|docs|build|refactor)(?:\\([^)]+\\))?:", "target": "chore" }
+              ],
+              "label_extractor": [
+                {
+                  "pattern": "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(?:\\([^)]+\\))?:",
+                  "target": "$1",
+                  "on_property": "title"
+                }
               ]
             }
         env:
