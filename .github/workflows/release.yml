@@ -122,9 +122,15 @@ jobs:
           failOnError: false
           configurationJson: |
             {
-              "template": "## Changes\n#{{CHANGELOG}}\n\n**Full Changelog**: #{{RELEASE_DIFF}}",
+              "template": "#{{CHANGELOG}}\n\n**Full Changelog**: #{{RELEASE_DIFF}}",
               "empty_template": "- No notable changes since #{{FROM_TAG}}",
-              "commit_template": "- #{{TITLE}} (#{{MERGE_SHA}}) by @#{{AUTHOR}}"
+              "commit_template": "- #{{TITLE}} (#{{MERGE_SHA}}) by @#{{AUTHOR}}",
+              "categories": [
+                { 
+                  "title": "## Changes", 
+                  "labels": [] 
+                }
+              ]
             }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
