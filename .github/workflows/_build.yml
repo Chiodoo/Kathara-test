@@ -1,9 +1,6 @@
 name: build-matrix
 
-# Reusable "build engine": contains the test + packaging matrix only.
-# Called by:
-# - build.yml (on PR)
-# - release.yml (on push to main)
+# Reusable "build engine"
 
 on:
   workflow_call:
