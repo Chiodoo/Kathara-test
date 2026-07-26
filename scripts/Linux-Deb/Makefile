@@ -2,7 +2,6 @@
 
 VERSION=__KATHARA_VERSION__
 DEBIAN_PACKAGE_VERSION=1
-LAUNCHPAD_NAME=user
 NO_BINARY_PACKAGES=pyroute2
 
 .PHONY: allSigned docker-build-image prepare-deb-source unpack-deb-source clean-output-folder copy-debian-folder download-pip build-man build-deb-unsigned build-deb-signed ppa clean venv autocompletion
@@ -26,6 +25,7 @@ docker-build-image_%:
 prepare-deb-source:
 	mkdir Output
 	cp -r ../../src Output/kathara-$(VERSION)
+	cp ./kathara.spec Output/kathara-$(VERSION)/
 	cd Output; tar -zcf kathara_$(VERSION).orig.tar.gz kathara-$(VERSION)
 
 unpack-deb-source:
@@ -58,13 +58,13 @@ download-pip: copy-debian-folder
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_amd64 && /root/py-build-env/bin/pip download --platform manylinux2014_x86_64 --only-binary=:all: zstandard
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_amd64 && /root/py-build-env/bin/pip download --no-binary=:all: -r ../../requirements-no-binary.txt
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_amd64 && /root/py-build-env/bin/pip download --platform manylinux2014_x86_64 --platform x86_64 --only-binary=:all: -r ../../requirements-binary.txt
-	cd Output/kathara-$(VERSION)/debian/pythonLibs_amd64 && /root/py-build-env/bin/pip download --no-binary=:all: nuitka
+	cd Output/kathara-$(VERSION)/debian/pythonLibs_amd64 && /root/py-build-env/bin/pip download --platform manylinux2014_x86_64 --only-binary=:all: pyinstaller "setuptools<81.0.0"
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --platform manylinux2014_aarch64 --only-binary=:all: flit_core
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --platform manylinux2014_aarch64 --only-binary=:all: wheel
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --platform manylinux2014_aarch64 --only-binary=:all: zstandard
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --no-binary=:all: -r ../../requirements-no-binary.txt
 	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --platform manylinux2014_aarch64 --platform arm64 --only-binary=:all: -r ../../requirements-binary.txt
-	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --no-binary=:all: nuitka
+	cd Output/kathara-$(VERSION)/debian/pythonLibs_arm64 && /root/py-build-env/bin/pip download --platform manylinux2014_aarch64 --only-binary=:all: pyinstaller "setuptools<81.0.0"
 	rm Output/kathara-$(VERSION)/debian/pythonLibs_arm64/zstandard*.whl
 	rm Output/kathara-$(VERSION)/debian/pythonLibs_amd64/zstandard*.whl
 	rm -Rf Output/kathara-$(VERSION)/requirements-binary.txt Output/kathara-$(VERSION)/requirements-no-binary.txt
@@ -90,10 +90,6 @@ build-deb-signed: venv build-man autocompletion download-pip
 	cp -r /root/gnupg-host/. /root/.gnupg
 	sed -i -e 's/__UBUNTU_VERSION__/$(distro)/g' Output/kathara-$(VERSION)/debian/changelog
 	cd Output/kathara-$(VERSION); debuild -S -sa
-
-ppa:
-	sed -i -e 's/__LAUNCHPAD_NAME__/$(LAUNCHPAD_NAME)/g' $(HOME)/.dput.cf
-	dput -U ppa:katharaframework/kathara Output/*.changes
 
 clean:
 	if [ -d Output ]; then \
